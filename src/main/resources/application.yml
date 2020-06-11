@@ -1,0 +1,7 @@
+
+logging:
+  file: application.log
+  path:
+  level:
+    root: info
+    com.lifengdi.store.client: DEBUG
