@@ -1,34 +1,31 @@
 package com.chan.controller.document;
 
-import com.chan.config.ElasticSearchConfig;
-import com.chan.model.DTO.UserDTO;
+import com.alibaba.fastjson.JSONObject;
+import com.chan.config.ElasticSearchUtils;
+import com.chan.model.VO.ExchangeElectricVO;
 import com.chan.utils.GsonUtils;
+import com.google.common.collect.Lists;
 import lombok.extern.log4j.Log4j2;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,212 +35,145 @@ import java.util.List;
  */
 @Log4j2
 @RestController
-@RequestMapping("/document")
 public class DocumentController {
 
     @Autowired
-    private ElasticSearchConfig elasticSearchConfig;
+    @Qualifier(value = "restHighLevelClient")
+    private RestHighLevelClient client;
 
-    @GetMapping("/create")
-    public void create() {
+    @Autowired
+    private ElasticSearchUtils elasticSearchUtils;
 
-        List<Long> roles = new ArrayList<>();
-        roles.add(1L);
-        roles.add(2L);
-        UserDTO.UserDTOBuilder builder = UserDTO.builder().id(1L).name("test1").roles(roles);
+    @GetMapping("/addDoc")
+    public void addDoc() {
+        ExchangeElectricVO exchangeElectricVO = ExchangeElectricVO.builder()
+                .id("199324")
+                .uid("CH200730000483")
+                .clientId("V20200309121811")
+                .mobile("15599534932")
+                .realName("李健")
+                .oldBat("BT104802512SZHL191120123")
+                .newBat("BT104802512SZHL191120456")
+                .operatorId(23L)
+                .operatorName("四优换电")
+                .cabinetName("XM朴朴SM12店-01")
+                .createTime("2020-07-30 12:25:15")
+                .build();
 
-        IndexRequest request = new IndexRequest("test-index");
-        //指定数据的ID
-        request.id("1");
-
-        IndexRequest source = request.source(GsonUtils.GsonString(builder), XContentType.JSON);
-        log.info("source {}", source);
-
-        try {
-            IndexResponse response = elasticSearchConfig.restHighLevelClient().index(request, RequestOptions.DEFAULT);
-            log.info("response {}", response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        elasticSearchUtils.addDoc(ExchangeElectricVO.EXCHANGE_ELECTRIC, exchangeElectricVO.getId().toString(), GsonUtils.GsonString(exchangeElectricVO));
     }
 
-    @GetMapping("/get")
-    public void get(@RequestParam("id") String id) {
-        GetRequest request = new GetRequest("test-index", id);
+    @GetMapping("/bulkAdd")
+    public void bulkAdd() {
+        List<ExchangeElectricVO> list = Arrays.asList(
+                ExchangeElectricVO.builder()
+                        .id("200135")
+                        .uid("CH200730001295")
+                        .clientId("V20200423031635")
+                        .mobile("15080053301")
+                        .realName("吴发发")
+                        .oldBat("BT104802512SZHL200323003")
+                        .newBat("BT104802512SZHL200323391")
+                        .operatorId(23L)
+                        .operatorName("四优换电")
+                        .cabinetName("FZ朴朴华建41店-01")
+                        .createTime("2020-07-30 16:15:08")
+                        .build(),
+                ExchangeElectricVO.builder()
+                        .id("200134")
+                        .uid("CH200730001294")
+                        .clientId("V20200709083301")
+                        .mobile("13101437586")
+                        .realName("张辉")
+                        .oldBat("BT104802512ST00191130345")
+                        .newBat("BT104802512ST00191130382")
+                        .operatorId(23L)
+                        .operatorName("四优换电")
+                        .cabinetName("XM朴朴西亭33店-01")
+                        .createTime("2020-07-30 16:14:59")
+                        .build(),
+                ExchangeElectricVO.builder()
+                        .id("200133")
+                        .uid("CH200730001293")
+                        .clientId("V20200603152601")
+                        .mobile("13276962231")
+                        .realName("谢燕飞")
+                        .oldBat("BT104802512SZHL200323061")
+                        .newBat("BT104802512SZHL200401899")
+                        .operatorId(23L)
+                        .operatorName("四优换电")
+                        .cabinetName("XM饿了么江头站-01安宝大厦")
+                        .createTime("2020-07-31 16:14:50")
+                        .build(),
+                ExchangeElectricVO.builder()
+                        .id("200132")
+                        .uid("CH200730001291")
+                        .clientId("V20200701133901")
+                        .mobile("15970932874")
+                        .realName("成雄")
+                        .oldBat("BT104802512SZHL200401887")
+                        .newBat("BT104802512ST00191130862")
+                        .operatorId(23L)
+                        .operatorName("四优换电")
+                        .cabinetName("XM饿了么人才站-01育秀里")
+                        .createTime("2020-07-31 16:12:36")
+                        .build()
+        );
 
-        try {
-            boolean exists = elasticSearchConfig.restHighLevelClient().exists(request, RequestOptions.DEFAULT);
-            log.info("exists {}", exists);
-
-            GetResponse response = elasticSearchConfig.restHighLevelClient().get(request, RequestOptions.DEFAULT);
-            log.info("response {}", response.getSourceAsString());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @GetMapping("/update")
-    public void update(@RequestParam("id") String id) {
-        UpdateRequest request = new UpdateRequest("test-index", id);
-
-        UserDTO.UserDTOBuilder builder = UserDTO.builder().name("test2");
-        UpdateRequest doc = request.doc(GsonUtils.GsonString(builder), XContentType.JSON);
-        log.info("doc {}", doc);
-
-        try {
-            //当条件为id时 update不存在的数据会报错
-            UpdateResponse response = elasticSearchConfig.restHighLevelClient().update(request, RequestOptions.DEFAULT);
-            log.info("response {}", response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @GetMapping("/delete")
-    public void delete(@RequestParam("id") String id) {
-        DeleteRequest request = new DeleteRequest("test-index", id);
-
-        try {
-            //当条件为id时 delete不存在的数据不会报错 status=NOT_FOUND
-            DeleteResponse response = elasticSearchConfig.restHighLevelClient().delete(request, RequestOptions.DEFAULT);
-            log.info("response {}", response);
-            log.info("status {}", response.status());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @GetMapping("bulkInsert")
-    public void insert() {
-        //创建bulk请求对象
+        //添加请求
         BulkRequest request = new BulkRequest();
-
-
-        //模拟业务数据
-        List<Long> roles = new ArrayList<>();
-        roles.add(1L);
-        roles.add(2L);
-
-        List<UserDTO> dataList = new ArrayList<>();
-        dataList.add(UserDTO.builder().id(10L).name("test10").roles(roles).build());
-        dataList.add(UserDTO.builder().id(11L).name("test11").roles(roles).build());
-        dataList.add(UserDTO.builder().id(12L).name("test12").roles(roles).build());
-
-        for (UserDTO userDTO : dataList) {
-            //将数据循环添加到bulk对象中
+        for (ExchangeElectricVO item : list) {
             request.add(
-                    //此处添加bulk操作的方法 例如insert update delete等
-                    new IndexRequest("test-index")
-                            .id(userDTO.getId().toString())
-                            .source(GsonUtils.GsonString(userDTO), XContentType.JSON)
+                    new IndexRequest(ExchangeElectricVO.EXCHANGE_ELECTRIC)
+                            .id(item.getId())
+                            .source(GsonUtils.GsonString(item), XContentType.JSON)
             );
         }
 
         try {
-            //执行批量新增操作
-            BulkResponse response = elasticSearchConfig.restHighLevelClient().bulk(request, RequestOptions.DEFAULT);
-
-            log.info("response {}", response);
-
-            //批量操作是否失败
-            log.info("hasFailures {}", response.hasFailures());
-
+            //发送请求
+            BulkResponse response = client.bulk(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
 
     }
 
-    @GetMapping("/bulkUpdate")
-    public void bulkUpdate() {
-        BulkRequest request = new BulkRequest();
+    @GetMapping("/updateDoc")
+    public void updateDoc() {
+        ExchangeElectricVO exchangeElectricVO = ExchangeElectricVO.builder()
+                .id("199323")
+                .createTime("2020-07-30 18:24:15")
+                .build();
 
-        List<UserDTO> dataList = new ArrayList<>();
-        dataList.add(UserDTO.builder().id(10L).name("test10-update").build());
-        dataList.add(UserDTO.builder().id(11L).name("test11-update").build());
-
-        for (UserDTO userDTO : dataList) {
-            request.add(
-                    new UpdateRequest("test-index", userDTO.getId().toString())
-                            .doc(GsonUtils.GsonString(userDTO), XContentType.JSON)
-            );
-        }
-
-        try {
-            BulkResponse response = elasticSearchConfig.restHighLevelClient().bulk(request, RequestOptions.DEFAULT);
-            log.info("response {}", response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        elasticSearchUtils.updateDoc(ExchangeElectricVO.EXCHANGE_ELECTRIC, exchangeElectricVO.getId().toString(), GsonUtils.GsonToMaps(GsonUtils.GsonString(exchangeElectricVO)));
     }
 
-    @GetMapping("bulkDelete")
-    public void bulkDelete() {
-        BulkRequest request = new BulkRequest();
-
-        List<String> list = new ArrayList<>();
-        list.add("10");
-        list.add("11");
-
-        for (String s : list) {
-            request.add(new DeleteRequest("test-index", s));
-        }
-
-        try {
-            BulkResponse response = elasticSearchConfig.restHighLevelClient().bulk(request, RequestOptions.DEFAULT);
-            log.info("response {}", response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+    @GetMapping("/delDoc")
+    public void delDoc(String id) {
+        elasticSearchUtils.deleteDoc(ExchangeElectricVO.EXCHANGE_ELECTRIC, id);
     }
 
     @GetMapping("/search")
-    public void search(
-            @RequestParam("name") String name,
-            @RequestParam("page") int page,
-            @RequestParam("size") int size
-    ) {
+    public void search(String key, String value) {
+//        SearchResponse response = elasticSearchUtils.search("mobile", "15599534932", 1, 20, ExchangeElectricVO.EXCHANGE_ELECTRIC);
+        SearchResponse response = elasticSearchUtils.search(key, value, 0, 20, ExchangeElectricVO.EXCHANGE_ELECTRIC);
+        SearchHits hits = response.getHits();
+        SearchHit[] hits1 = hits.getHits();
 
-        //创建请求对象
-        SearchRequest request = new SearchRequest("test-index");
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-
-        //分页
-        searchSourceBuilder.from(page);
-        searchSourceBuilder.size(size);
-
-        //条件查询
-        TermQueryBuilder termQueryBuilder = new TermQueryBuilder("name", name);
-        SearchSourceBuilder query = searchSourceBuilder.query(termQueryBuilder);
-        log.info("query {}", query);
-
-        request.source(searchSourceBuilder);
-
-
-        SearchResponse response = null;
-        try {
-            response = elasticSearchConfig.restHighLevelClient().search(request, RequestOptions.DEFAULT);
-            log.info("response {}", response);
-
-            List<UserDTO> resList = new ArrayList<>();
-            for (SearchHit fields : response.getHits().getHits()) {
-                String value = fields.getSourceAsString();
-                log.info("fields {}", value);
-                resList.add(GsonUtils.GsonToBean(value, UserDTO.class));
-            }
-
-            resList.stream().forEach(System.out::println);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (SearchHit fields : hits1) {
+            System.out.println(fields.getSourceAsString());
         }
 
+//        hits.forEach(item -> System.out.println(item.getSourceAsString()));
+    }
 
+    @GetMapping("/term")
+    public void term(String key, String value) {
+//        SearchResponse response = elasticSearchUtils.search("mobile", "15599534932", 1, 20, ExchangeElectricVO.EXCHANGE_ELECTRIC);
+        SearchResponse response = elasticSearchUtils.termSearch(key, value, 0, 20, ExchangeElectricVO.EXCHANGE_ELECTRIC);
+        SearchHits hits = response.getHits();
+        hits.forEach(item -> System.out.println(item.getSourceAsString()));
     }
 
 }
