@@ -2,8 +2,6 @@ package com.chan.config;
 
 import lombok.extern.log4j.Log4j2;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -41,6 +39,10 @@ public class ElasticSearchUtils {
     @Autowired
     @Qualifier(value = "restHighLevelClient")
     private RestHighLevelClient client;
+
+    public RestHighLevelClient restHighLevelClient() {
+        return client;
+    }
 
     /**
      * 创建索引

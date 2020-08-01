@@ -1,5 +1,4 @@
 
-
 logging:
   file: application.log
   path:
@@ -21,4 +20,3 @@ elasticsearch:
   client:
     connectTimeOut: 5000
     socketTimeout: 15000
-
