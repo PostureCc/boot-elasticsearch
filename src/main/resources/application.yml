@@ -11,7 +11,6 @@ server:
   port: 8081
 
 
-
 elasticsearch:
   host: jd
   port: 9201
@@ -24,8 +23,8 @@ elasticsearch:
     socketTimeout: 15000
 
 
-#spring:
-#  data:
-#    elasticsearch:
-#      cluster-nodes: jd:9201
-#      cluster-name: JD
+spring:
+  data:
+    elasticsearch:
+      cluster-nodes: jd:9300
+      cluster-name: JD
