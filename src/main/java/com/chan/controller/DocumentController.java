@@ -1,6 +1,5 @@
 package com.chan.controller;
 
-import com.chan.model.VO.ExchangeElectricVO;
 import com.chan.repo.ExchangeElectricRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +13,7 @@ public class DocumentController {
 
     @GetMapping("/test")
     public void test() {
-//        System.out.println(exchangeElectricRepository.findAll());
+        System.out.println(exchangeElectricRepository.findAll());
     }
 
 

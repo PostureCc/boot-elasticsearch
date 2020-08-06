@@ -17,12 +17,13 @@ import java.io.Serializable;
 //@AllArgsConstructor
 
 //@Document 文档对象 （索引信息、文档类型 ）
-@Document(indexName = ExchangeElectricVO.EXCHANGE_ELECTRIC, shards = 1, replicas = 0)
+@Document(indexName = ExchangeElectricVO.BC_ADMIN, type = ExchangeElectricVO.EXCHANGE_ELECTRIC, shards = 1, replicas = 0)
 public class ExchangeElectricVO implements Serializable {
 
     /**
      * 索引名称只能小写!
      */
+    public static final String BC_ADMIN = "bcadmin";
     public static final String EXCHANGE_ELECTRIC = "exchange_electric_rest";
 
     @Id
