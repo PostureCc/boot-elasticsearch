@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+//@Repository
 public interface ExchangeElectricRepository extends ElasticsearchRepository<ExchangeElectricVO, String> {
 
 
@@ -28,7 +28,7 @@ public interface ExchangeElectricRepository extends ElasticsearchRepository<Exch
     List<ExchangeElectricVO> searchById(String id);
 
     @Query("{\"match\":{\"clientId\":\"?0\"}}")
-    ExchangeElectricVO searchByClientId(String clientId);
+    List<ExchangeElectricVO> searchByClientId(String clientId);
 
     /**
      * 不能这些查询所有!!

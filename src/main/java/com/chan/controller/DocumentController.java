@@ -4,6 +4,9 @@ import com.chan.model.VO.ExchangeElectricVO;
 import com.chan.repo.ExchangeElectricRepository;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,18 +36,32 @@ public class DocumentController {
 
     @GetMapping("/addDoc")
     public void addDoc() {
+//        ExchangeElectricVO exchangeElectricVO = ExchangeElectricVO.builder()
+//                .id("199324")
+//                .uid("CH200730000483")
+//                .clientId("V20200309121811")
+//                .mobile("15599534932")
+//                .realName("李健")
+//                .oldBat("BT104802512SZHL191120123")
+//                .newBat("BT104802512SZHL191120456")
+//                .operatorId(23L)
+//                .operatorName("四优换电")
+//                .cabinetName("XM朴朴SM12店-01")
+//                .createTime("2020-07-30 12:25:15")
+////                .createTime(new Date())
+//                .build();
         ExchangeElectricVO exchangeElectricVO = ExchangeElectricVO.builder()
-                .id("199324")
+                .id("218118")
                 .uid("CH200730000483")
                 .clientId("V20200309121811")
                 .mobile("15599534932")
                 .realName("李健")
-                .oldBat("BT104802512SZHL191120123")
-                .newBat("BT104802512SZHL191120456")
+                .oldBat("BT104802512SZHL191120274")
+                .newBat("BT104802512SZHL200401653")
                 .operatorId(23L)
                 .operatorName("四优换电")
-                .cabinetName("XM朴朴SM12店-01")
-                .createTime("2020-07-30 12:25:15")
+                .cabinetName("XM朴朴SM12店-02")
+                .createTime("2020-08-06 16:29:40")
 //                .createTime(new Date())
                 .build();
         exchangeElectricRepository.save(exchangeElectricVO);
@@ -130,16 +147,34 @@ public class DocumentController {
         System.out.println(exchangeElectricRepository.searchById(id));
     }
 
-    @GetMapping("/searchByClientId")
-    public void searchByClientId(String ClientId) {
-        System.out.println(exchangeElectricRepository.searchByClientId(ClientId));
-    }
-
     @GetMapping("/findById")
     public void findById(String id) {
         //条件查询
         System.out.println(exchangeElectricRepository.findById(id));
     }
 
+    @GetMapping("/searchByClientId")
+    public void searchByClientId(String clientId) {
+        List<ExchangeElectricVO> list = exchangeElectricRepository.searchByClientId(clientId);
+        list.forEach(item -> System.out.println(item));
+    }
+
+    @GetMapping("/querySearch")
+    public void querySearch(String clientId, String oldBat) {
+        BoolQueryBuilder builder = QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery("clientId", clientId))
+                .must(QueryBuilders.matchQuery("oldBat", oldBat));
+        Iterable<ExchangeElectricVO> iterable = exchangeElectricRepository.search(builder);
+        System.out.println("builder " + builder);
+        for (ExchangeElectricVO vo : iterable) {
+            System.out.println(vo);
+        }
+    }
+
+    @GetMapping("/count")
+    public void count() {
+        long count = exchangeElectricRepository.count();
+        System.out.println(count);
+    }
 
 }
