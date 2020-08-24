@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 @RestController
 public class AnalyzerController {
@@ -59,31 +57,9 @@ public class AnalyzerController {
         System.out.println(EntityUtils.toString(response.getEntity()));
     }
 
-    public static void main(String[] args) {
-        String shopId = "123";
-        String s = "{\n" +
-                "    \"query\": {\n" +
-                "        \"bool\": {\n" +
-                "            \"must\": [\n" +
-                "                {\n" +
-                "                    \"term\": {\n" +
-                "                        \"shopId\": \"" + shopId + "\"\n" +
-                "                    }\n" +
-                "                }\n" +
-                "            ]\n" +
-                "        }\n" +
-                "    },\n" +
-                "    \"script\": {\n" +
-                "        \"inline\": \"ctx._source.inventoryNum='0';ctx._source.amount='0';ctx._source.cost='0';ctx._source.profit='0';\",\n" +
-                "        \"lang\": \"painless\"\n" +
-                "    }\n" +
-                "}";
-        System.out.println(s);
-    }
-
     @GetMapping("/updateByQuery")
     public void updateByQuery() throws IOException {
-        //慎用
+        //慎用 有警告
         String index = "/bcadmin_exchange_electric/_update_by_query";
 
         Request request = new Request("POST", index);
@@ -118,7 +94,6 @@ public class AnalyzerController {
 
         String string = EntityUtils.toString(response.getEntity());
         System.out.println("string " + string);
-
     }
 
 }
