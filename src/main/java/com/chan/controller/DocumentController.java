@@ -27,7 +27,7 @@ public class DocumentController {
     public void createIndex() {
         String settings = "{\"index\":{\"number_of_shards\":1,\"number_of_replicas\":0}}",
                 mapping = "{\"properties\":{\"cabinetName\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\",\"ignore_above\":256}}},\"clientId\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\",\"ignore_above\":256}}},\"createTime\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\",\"ignore_above\":256}}},\"id\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\",\"ignore_above\":256}}},\"mobile\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\",\"ignore_above\":256}}},\"newBat\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\",\"ignore_above\":256}}},\"oldBat\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\",\"ignore_above\":256}}},\"operatorId\":{\"type\":\"long\"},\"operatorName\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\",\"ignore_above\":256}}},\"realName\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\",\"ignore_above\":256}}},\"uid\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\",\"ignore_above\":256}}}}}";
-        CreateIndexRequest request = new CreateIndexRequest(ExchangeElectricVO.BC_ADMIN);
+        CreateIndexRequest request = new CreateIndexRequest(ExchangeElectricVO.EXCHANGE_ELECTRIC);
         request.settings(settings, XContentType.JSON);
         request.mapping(mapping, XContentType.JSON);
 
