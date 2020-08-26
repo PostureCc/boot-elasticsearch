@@ -45,10 +45,10 @@ public class ExchangeElectricVO implements Serializable {
     @Field(type = FieldType.Text)
     private String realName;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
     private String oldBat;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
     private String newBat;
 
     @Field(type = FieldType.Long)
@@ -56,6 +56,9 @@ public class ExchangeElectricVO implements Serializable {
 
     @Field(type = FieldType.Text)
     private String operatorName;
+
+    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    private String cabinetId;
 
     @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
     private String cabinetName;

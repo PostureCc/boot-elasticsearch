@@ -30,6 +30,10 @@ public interface ExchangeElectricRepository extends ElasticsearchRepository<Exch
     @Query("{\"match\":{\"clientId\":\"?0\"}}")
     List<ExchangeElectricVO> searchByClientId(String clientId);
 
+    //@Query("{\"bool\":{\"must\":[{\"match\":{\"cabinetName\":\"朴朴 华建\"}}],\"should\":[{\"match\":{\"cabinetName\":{\"query\":\"华建\",\"boost\":10}}},{\"match\":{\"cabinetName\":{\"query\":\"朴朴\",\"boost\":1}}}]}}")
+    @Query("{\"bool\":{\"must\":[{\"match\":{\"cabinetName\":\"?0\"}}],\"should\":[{\"match\":{\"cabinetName\":{\"query\":\"?1\",\"boost\":10}}},{\"match\":{\"cabinetName\":{\"query\":\"?2\",\"boost\":1}}}]}}")
+    List<ExchangeElectricVO> search2(String params1,String params2,String params3);
+
     /**
      * 不能这些查询所有!!
      */

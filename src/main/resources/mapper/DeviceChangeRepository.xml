@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chan.mapper.DeviceChangeMapper">
+
+    <select id="list" resultType="com.chan.model.VO.ExchangeElectricVO">
+        SELECT t1.`id`, t1.`uid`, t2.`identity_id` AS clientId, IFNULL(t2.real_name,t2.`mobile`)realName, t2.`mobile` mobile, t1.`old_battery` AS oldBat, t1.`new_battery` AS newBat, t4.`id` operatorId,t4.`operatorname` AS operatorName,t3.`number` cabinetId, t3.`name` AS cabinetName, t1.`create_time` createTime
+         FROM t_device_change t1
+         LEFT JOIN `t_wx_user` t2 ON (t2.id = t1.user_id)
+         LEFT JOIN t_cabinets t3 ON (t3.number = t1.cabinet_id)
+         LEFT JOIN t_operator t4 ON (t4.id = t3.id_operator)
+         LEFT JOIN system_user_operator t5 ON t5.operatorid=t4.id
+         WHERE t1.change_type = 1 AND t5.userid = 1
+         ORDER BY t1.id DESC
+    </select>
+
+</mapper>

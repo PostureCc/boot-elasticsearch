@@ -28,3 +28,27 @@ spring:
     elasticsearch:
       cluster-nodes: jd:9300
       cluster-name: JD
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/bicycle_admin?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=true
+    username: root
+    password: root
+    type: com.alibaba.druid.pool.DruidDataSource
+    validationQuery: SELECT 1 FROM DUAL
+    filters: stat,wall,log4j
+    initialSize: 5
+    logSlowSql: true
+    maxActive: 500
+    maxWait: 60000
+    minEvictableIdleTimeMillis: 300000
+    minIdle: 5
+    testOnBorrow: false
+    testOnReturn: false
+    testWhileIdle: true
+    timeBetweenEvictionRunsMillis: 60000
+
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mapper/**/*.xml
+  type-aliases-package: com.chan.mapper
