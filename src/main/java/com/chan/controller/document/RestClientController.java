@@ -1,6 +1,6 @@
 package com.chan.controller.document;
 
-import com.chan.config.RestClientConfig;
+import com.chan.config.ElasticSearchConfig;
 import com.chan.model.VO.ExchangeElectricVO;
 import com.chan.utils.GsonUtils;
 import org.apache.http.util.EntityUtils;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-public class AnalyzerController {
+public class RestClientController {
 
     @GetMapping("/save")
     public void save() throws IOException {
@@ -35,7 +35,7 @@ public class AnalyzerController {
         Request request = new Request("POST", "/bcadmin_exchange_electric/_doc/" + exchangeElectricVO.getId());
         request.setJsonEntity(GsonUtils.GsonString(exchangeElectricVO));
 
-        Response response = RestClientConfig.restClient.performRequest(request);
+        Response response = ElasticSearchConfig.getRestClient().performRequest(request);
         System.out.println(EntityUtils.toString(response.getEntity()));
 
     }
@@ -52,7 +52,7 @@ public class AnalyzerController {
         Request request = new Request("POST", index);
         request.setJsonEntity("{\"doc\":{\"realName\":\"李健2\"}}");
 
-        Response response = RestClientConfig.restClient.performRequest(request);
+        Response response = ElasticSearchConfig.getRestClient().performRequest(request);
 
         System.out.println(EntityUtils.toString(response.getEntity()));
     }
@@ -65,7 +65,7 @@ public class AnalyzerController {
         Request request = new Request("POST", index);
         request.setJsonEntity("{\"query\":{\"term\":{\"id\":\"218118\"}},\"script\":{\"inline\":\"ctx._source.realName='李健';ctx._source.createTime='2020-08-06 16:29:50'\",\"lang\":\"painless\"}}");
 
-        Response response = RestClientConfig.restClient.performRequest(request);
+        Response response = ElasticSearchConfig.getRestClient().performRequest(request);
         System.out.println(EntityUtils.toString(response.getEntity()));
     }
 
@@ -76,7 +76,7 @@ public class AnalyzerController {
         String queryString = "{\"query\":{\"match_all\":{}}}";
         request.setJsonEntity(queryString);
 
-        Response response = RestClientConfig.restClient.performRequest(request);
+        Response response = ElasticSearchConfig.getRestClient().performRequest(request);
         String string = EntityUtils.toString(response.getEntity());
         System.out.println("string " + string);
     }
@@ -88,7 +88,7 @@ public class AnalyzerController {
         String queryString = String.format("{\"query\":{\"match\":{\"cabinetName\":\"%s\"}},\"highlight\":{\"fields\":{\"cabinetName\":{}}}}", cabinetName);
         request.setJsonEntity(queryString);
 
-        Response response = RestClientConfig.restClient.performRequest(request);
+        Response response = ElasticSearchConfig.getRestClient().performRequest(request);
 
         System.out.println("RequestLine " + response.getRequestLine());
 
