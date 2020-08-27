@@ -21,7 +21,6 @@ import java.io.Serializable;
 //indexName:索引名称 type:规定只能使用_doc 防止后续升级出现不必要的问题
 @Document(indexName = ExchangeElectricVO.EXCHANGE_ELECTRIC, type = "_doc", shards = 1, replicas = 0)
 public class ExchangeElectricVO implements Serializable {
-
     /**
      * 索引名称只能小写!
      */
@@ -33,34 +32,34 @@ public class ExchangeElectricVO implements Serializable {
     @Field(type = FieldType.Long)
     private String id;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text)
     private String uid;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text)
     private String clientId;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text)
     private String mobile;
 
-    @Field(type = FieldType.Keyword, analyzer = "ngram", searchAnalyzer = "ngram")
+    @Field(type = FieldType.Text)
     private String realName;
 
-    @Field(type = FieldType.Keyword, analyzer = "ngram", searchAnalyzer = "ngram")
+    @Field(type = FieldType.Keyword)
     private String oldBat;
 
-    @Field(type = FieldType.Keyword, analyzer = "ngram", searchAnalyzer = "ngram")
+    @Field(type = FieldType.Keyword)
     private String newBat;
 
     @Field(type = FieldType.Long)
     private Long operatorId;
 
-    @Field(type = FieldType.Keyword, analyzer = "ngram", searchAnalyzer = "ngram")
+    @Field(type = FieldType.Text)
     private String operatorName;
 
-    @Field(type = FieldType.Keyword, analyzer = "ngram", searchAnalyzer = "ngram")
+    @Field(type = FieldType.Text)
     private String cabinetId;
 
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
     private String cabinetName;
 
     @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd HH:mm:ss")
