@@ -27,8 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Log4j2
@@ -62,7 +60,7 @@ public class RestHighLevelClientController {
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder()
                 .must(new TermQueryBuilder("operatorId", operatorId))
                 .must(new MatchQueryBuilder("cabinetName", cabinetName).operator(Operator.AND))
-                .must(new MatchQueryBuilder("oldBat", oldBat).analyzer("ik_max_word").operator(Operator.AND));
+                .must(new MatchQueryBuilder("oldBat", oldBat).operator(Operator.AND));
 
         searchSourceBuilder.query(boolQueryBuilder)
                 .sort("id", SortOrder.DESC);
@@ -93,6 +91,37 @@ public class RestHighLevelClientController {
         }
         return ResultUtils.ok();
     }
+
+    /**
+     * 模糊查询
+     GET /bcadmin_exchange_electric/_search
+     {
+     "query": {
+     "bool": {
+     "must": [
+     {
+     "term": {
+     "operatorId": 10
+     }
+     },
+     {
+     "wildcard": {
+     "oldBat": "*112*"
+     }
+     }
+     ]
+     }
+     }
+     }
+
+     POST _analyze
+     {
+     "tokenizer": "ngram",
+     "text": "BT1048016080XHS200715004"
+     }
+
+     结合ngram分词器做自动补全
+     * */
 
 
 }
