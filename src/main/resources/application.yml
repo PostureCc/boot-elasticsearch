@@ -25,11 +25,10 @@ elasticsearch:
 spring:
   # jdbc_config   datasource
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
     username: root
     password: root
-    url: jdbc:mysql://127.0.0.1:3306/bicycle_admin_test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=true
+    url: jdbc:mysql://fnjkj1:3306/bicycle_admin_test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=true
 
     # Hikari will use the above plus the following to setup connection pooling
     hikari:
@@ -42,4 +41,8 @@ spring:
       minimum-idle: 5
       pool-name: HikariCPDataSource
 
-
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/mapper/**/*.xml
+  type-aliases-package: com.chan.mapper

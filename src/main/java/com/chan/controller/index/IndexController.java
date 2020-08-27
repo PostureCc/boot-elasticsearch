@@ -20,8 +20,9 @@ public class IndexController {
 
 
     @GetMapping("/createIndex")
-    public void createIndex() throws IOException {
-        String indexName = ExchangeElectricVO.EXCHANGE_ELECTRIC,
+    public void createIndex(String indexName) throws IOException {
+        //String indexName = ExchangeElectricVO.EXCHANGE_ELECTRIC,
+        String
                 settings = "{\"index\":{\"number_of_shards\":1,\"number_of_replicas\":0}}",
                 mapping = "{\"properties\":{\"cabinetId\":{\"type\":\"keyword\"},\"cabinetName\":{\"type\":\"keyword\"},\"clientId\":{\"type\":\"keyword\"},\"createTime\":{\"type\":\"date\",\"format\":\"yyyy-MM-dd HH:mm:ss\"},\"id\":{\"type\":\"keyword\"},\"mobile\":{\"type\":\"keyword\"},\"newBat\":{\"type\":\"keyword\"},\"oldBat\":{\"type\":\"keyword\"},\"operatorId\":{\"type\":\"long\"},\"operatorName\":{\"type\":\"keyword\"},\"realName\":{\"type\":\"keyword\"},\"uid\":{\"type\":\"keyword\"}}}";
 
@@ -35,8 +36,8 @@ public class IndexController {
     }
 
     @GetMapping("/deleteIndex")
-    public void deleteIndex() {
-        DeleteIndexRequest request = new DeleteIndexRequest(ExchangeElectricVO.EXCHANGE_ELECTRIC);
+    public void deleteIndex(String indexName) {
+        DeleteIndexRequest request = new DeleteIndexRequest(indexName);
         try {
             AcknowledgedResponse response = ElasticSearchConfig.getRestHighLevelClient().indices().delete(request, RequestOptions.DEFAULT);
             log.info("response {}", response.isAcknowledged());

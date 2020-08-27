@@ -36,6 +36,8 @@ public class ExchangeElectricVO implements Serializable {
 
     private String operatorName;
 
+    private String cabinetId;
+
     private String cabinetName;
 
     private String createTime;
