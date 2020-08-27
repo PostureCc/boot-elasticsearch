@@ -33,34 +33,34 @@ public class ExchangeElectricVO implements Serializable {
     @Field(type = FieldType.Long)
     private String id;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Keyword)
     private String uid;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Keyword)
     private String clientId;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Keyword)
     private String mobile;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Keyword, analyzer = "ngram", searchAnalyzer = "ngram")
     private String realName;
 
-    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ngram", searchAnalyzer = "ngram")
     private String oldBat;
 
-    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ngram", searchAnalyzer = "ngram")
     private String newBat;
 
     @Field(type = FieldType.Long)
     private Long operatorId;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Keyword, analyzer = "ngram", searchAnalyzer = "ngram")
     private String operatorName;
 
-    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword, analyzer = "ngram", searchAnalyzer = "ngram")
     private String cabinetId;
 
-    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    @Field(type = FieldType.Keyword)
     private String cabinetName;
 
     @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd HH:mm:ss")
