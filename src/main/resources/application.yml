@@ -20,3 +20,26 @@ elasticsearch:
   client:
     connectTimeOut: 5000
     socketTimeout: 15000
+
+
+spring:
+  # jdbc_config   datasource
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    username: root
+    password: root
+    url: jdbc:mysql://127.0.0.1:3306/bicycle_admin_test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=true
+
+    # Hikari will use the above plus the following to setup connection pooling
+    hikari:
+      auto-commit: true
+      connection-test-query: SELECT 1
+      connection-timeout: 30000
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      maximum-pool-size: 15
+      minimum-idle: 5
+      pool-name: HikariCPDataSource
+
+
