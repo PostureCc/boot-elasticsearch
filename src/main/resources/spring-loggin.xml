@@ -85,12 +85,40 @@
         <appender-ref ref="DEBUG_FILE"/>    
     </appender>
 
-    <appender name="STASH"
-              class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>JD:4560</destination>
+    <!--将日志输出到Logstash-->
+<!--    <appender name="STASH"-->
+<!--              class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
+<!--        <destination>JD:4560</destination>-->
 
-        <!-- encoder is required -->
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+<!--        &lt;!&ndash; encoder is required &ndash;&gt;-->
+<!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>-->
+<!--    </appender>-->
+
+    <appender name="KAFKA_APPENDER" class="com.github.danielwegener.logback.kafka.KafkaAppender">
+        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder" >
+            <customFields>{"appname":"webdemo"}</customFields>
+            <includeMdc>true</includeMdc>
+            <includeContext>true</includeContext>
+            <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                <maxDepthPerThrowable>30</maxDepthPerThrowable>
+                <rootCauseFirst>true</rootCauseFirst>
+            </throwableConverter>
+        </encoder>
+        <topic>filebeat-topic-test</topic>
+        <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.HostNameKeyingStrategy" />
+        <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" />
+        <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.BlockingDeliveryStrategy">
+            <!-- wait indefinitely until the kafka producer was able to send the message -->
+            <timeout>0</timeout>
+        </deliveryStrategy>
+        <producerConfig>bootstrap.servers=jd:9092</producerConfig>
+        <!-- don't wait for a broker to ack the reception of a batch.  -->
+        <producerConfig>acks=0</producerConfig>
+        <!-- wait up to 1000ms and collect log messages before sending them as a batch -->
+        <producerConfig>linger.ms=1000</producerConfig>
+        <!-- even if the producer buffer runs full, do not block the application but start to drop messages -->
+        <producerConfig>max.block.ms=0</producerConfig>
+        <appender-ref ref="CONSOLE" />
     </appender>
 
     <!-- 控制台输出日志级别 -->
@@ -98,7 +126,8 @@
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DEBUG_FILE"/>
         <appender-ref ref="ERROR_FILE"/>
-        <appender-ref ref="STASH"/>
+<!--        <appender-ref ref="STASH"/>-->
+        <appender-ref ref="KAFKA_APPENDER"/>
     </root>
     <!-- 指定项目中某个包，当有日志操作行为时的日志记录级别 -->
     <!-- com.appley为根包，也就是只要是发生在这个根包下面的所有日志操作行为的权限都是DEBUG -->
