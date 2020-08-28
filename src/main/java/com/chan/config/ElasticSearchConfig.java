@@ -25,7 +25,7 @@ public class ElasticSearchConfig {
             synchronized (ElasticSearchConfig.class) {
                 if (restClientBuilder == null) {
                     RestClientBuilder builder = RestClient.builder(
-                            new HttpHost("jd", 9201, "http")
+                            new HttpHost("JD", 9201, "http")
                     );
 
                     builder.setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
