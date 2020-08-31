@@ -14,16 +14,16 @@ server:
   port: 8081
 
 
-elasticsearch:
-  host: jd
-  port: 9201
-  scheme: http
-  charset: UTF-8
-  token: esToken
-
-  client:
-    connectTimeOut: 5000
-    socketTimeout: 15000
+#elasticsearch:
+#  host: jd
+#  port: 9201
+#  scheme: http
+#  charset: UTF-8
+#  token: esToken
+#
+#  client:
+#    connectTimeOut: 5000
+#    socketTimeout: 15000
 
 
 spring:

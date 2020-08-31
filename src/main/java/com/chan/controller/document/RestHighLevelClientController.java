@@ -88,7 +88,7 @@ public class RestHighLevelClientController {
         long time1 = System.currentTimeMillis();
         list.stream().forEach(item -> {
             request.add(
-                    new IndexRequest("bcadmin_exchange_electric1", "_doc")
+                    new IndexRequest("bcadmin_exchange_electric", "_doc")
                             .id(item.getId())
                             .source(GsonUtils.GsonString(item), XContentType.JSON)
             );
@@ -123,12 +123,21 @@ public class RestHighLevelClientController {
         searchSourceBuilder.from(page.getPageNum()).size(page.getPageSize());
 
         //条件查询
-        BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder()
-                .must(new TermQueryBuilder("operatorId", operatorId))
-                .must(new MatchQueryBuilder("cabinetName", cabinetName).operator(Operator.AND).analyzer("ik_max_word"))
-                //.must(new MatchQueryBuilder("oldBat", oldBat).operator(Operator.AND))
-                //Wildcard相当于MySQL中的模糊查询
-                .must(new WildcardQueryBuilder("oldBat", String.format("*%s*", oldBat)));
+        BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+
+        if (null != operatorId && 0 != operatorId) {
+            boolQueryBuilder.must(new TermQueryBuilder("operatorId", operatorId));
+        }
+
+        if (null != cabinetName && "" != cabinetName) {
+            boolQueryBuilder.must(new MatchQueryBuilder("cabinetName", cabinetName).operator(Operator.AND));
+        }
+
+        if (null != oldBat && "" != oldBat) {
+            //Wildcard相当于MySQL中的模糊查询
+            boolQueryBuilder.must(new WildcardQueryBuilder("oldBat", String.format("*%s*", oldBat)));
+        }
+
 
         searchSourceBuilder.query(boolQueryBuilder)
                 .sort("id", SortOrder.DESC);
@@ -139,6 +148,7 @@ public class RestHighLevelClientController {
         try {
             //获取查询条件的返回值
             SearchResponse searchResponse = ElasticSearchConfig.getRestHighLevelClient().search(searchRequest, RequestOptions.DEFAULT);
+            //searchResponse.getScrollId();
 
             //获取结果集
             SearchHits responseHits = searchResponse.getHits();

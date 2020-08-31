@@ -34,6 +34,9 @@ public class ExchangeElectricVO implements Serializable {
 
     private Long operatorId;
 
+    //待确认是否可以获取到 还有换电柜短ID也一样
+    private String operatorNo;
+
     private String operatorName;
 
     private String cabinetId;

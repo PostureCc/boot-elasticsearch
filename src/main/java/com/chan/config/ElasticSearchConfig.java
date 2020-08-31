@@ -2,7 +2,12 @@ package com.chan.config;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.elasticsearch.client.Node;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
@@ -24,8 +29,13 @@ public class ElasticSearchConfig {
         if (restClientBuilder == null) {
             synchronized (ElasticSearchConfig.class) {
                 if (restClientBuilder == null) {
+                    final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                    credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "elastic"));
+
                     RestClientBuilder builder = RestClient.builder(
-                            new HttpHost("JD", 9201, "http")
+                            new HttpHost("fnjkj6", 9201, "http"),
+                            new HttpHost("fnjkj7", 9201, "http"),
+                            new HttpHost("fnjkj8", 9201, "http")
                     );
 
                     builder.setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
@@ -37,12 +47,16 @@ public class ElasticSearchConfig {
                             builder.setSocketTimeout(180000);
                             return builder;
                         }
-                    });
-
-                    builder.setFailureListener(new RestClient.FailureListener() {
+                    }).setFailureListener(new RestClient.FailureListener() {
                         @Override
                         public void onFailure(Node node) {
                             log.error("Node Exception: {}", node);
+                        }
+                    }).setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+                        @Override
+                        public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpAsyncClientBuilder) {
+
+                            return httpAsyncClientBuilder.disableAuthCaching().setDefaultCredentialsProvider(credentialsProvider);
                         }
                     });
 

@@ -1,7 +1,6 @@
 package com.chan.controller.index;
 
 import com.chan.config.ElasticSearchConfig;
-import com.chan.model.VO.ExchangeElectricVO;
 import lombok.extern.log4j.Log4j2;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
@@ -22,6 +21,7 @@ public class IndexController {
     @GetMapping("/createIndex")
     public void createIndex(String indexName) throws IOException {
         //String indexName = ExchangeElectricVO.EXCHANGE_ELECTRIC,
+        //{"index":{"number_of_shards":3,"number_of_replicas":1}}
         String
                 settings = "{\"index\":{\"number_of_shards\":1,\"number_of_replicas\":0}}",
                 mapping = "{\"properties\":{\"cabinetId\":{\"type\":\"keyword\"},\"cabinetName\":{\"type\":\"keyword\"},\"clientId\":{\"type\":\"keyword\"},\"createTime\":{\"type\":\"date\",\"format\":\"yyyy-MM-dd HH:mm:ss\"},\"id\":{\"type\":\"keyword\"},\"mobile\":{\"type\":\"keyword\"},\"newBat\":{\"type\":\"keyword\"},\"oldBat\":{\"type\":\"keyword\"},\"operatorId\":{\"type\":\"long\"},\"operatorName\":{\"type\":\"keyword\"},\"realName\":{\"type\":\"keyword\"},\"uid\":{\"type\":\"keyword\"}}}";
