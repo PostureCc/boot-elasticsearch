@@ -23,8 +23,8 @@ public class IndexController {
         //String indexName = ExchangeElectricVO.EXCHANGE_ELECTRIC,
         //{"index":{"number_of_shards":3,"number_of_replicas":1}}
         String
-                settings = "{\"index\":{\"number_of_shards\":1,\"number_of_replicas\":0}}",
-                mapping = "{\"properties\":{\"cabinetId\":{\"type\":\"keyword\"},\"cabinetName\":{\"type\":\"keyword\"},\"clientId\":{\"type\":\"keyword\"},\"createTime\":{\"type\":\"date\",\"format\":\"yyyy-MM-dd HH:mm:ss\"},\"id\":{\"type\":\"keyword\"},\"mobile\":{\"type\":\"keyword\"},\"newBat\":{\"type\":\"keyword\"},\"oldBat\":{\"type\":\"keyword\"},\"operatorId\":{\"type\":\"long\"},\"operatorName\":{\"type\":\"keyword\"},\"realName\":{\"type\":\"keyword\"},\"uid\":{\"type\":\"keyword\"}}}";
+                settings = "{\"index\":{\"number_of_shards\":1,\"number_of_replicas\":0,\"max_result_window\":500000}}",
+                mapping = "{\"properties\":{\"cabinetId\":{\"type\":\"keyword\"},\"cabinetName\":{\"type\":\"keyword\"},\"clientId\":{\"type\":\"keyword\"},\"createTime\":{\"type\":\"date\",\"format\":\"yyyy-MM-dd HH:mm:ss\"},\"id\":{\"type\":\"long\"},\"mobile\":{\"type\":\"keyword\"},\"newBat\":{\"type\":\"keyword\"},\"oldBat\":{\"type\":\"keyword\"},\"operatorId\":{\"type\":\"long\"},\"operatorName\":{\"type\":\"keyword\"},\"realName\":{\"type\":\"keyword\"},\"uid\":{\"type\":\"keyword\"}}}";
 
         CreateIndexRequest request = new CreateIndexRequest(indexName);
         request.settings(settings, XContentType.JSON);

@@ -16,6 +16,10 @@ import org.elasticsearch.client.RestHighLevelClient;
 @Log4j2
 public class ElasticSearchConfig {
 
+    public static final String POST = "POST";
+    public static final String GET = "GET";
+    public static final String _DCO = "_doc";
+
     private static volatile RestClientBuilder restClientBuilder;
 
     private static volatile RestClient restClient;
@@ -33,9 +37,10 @@ public class ElasticSearchConfig {
                     credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "elastic"));
 
                     RestClientBuilder builder = RestClient.builder(
-                            new HttpHost("fnjkj6", 9201, "http"),
-                            new HttpHost("fnjkj7", 9201, "http"),
-                            new HttpHost("fnjkj8", 9201, "http")
+//                            new HttpHost("fnjkj6", 9201, "http"),
+//                            new HttpHost("fnjkj7", 9201, "http"),
+//                            new HttpHost("fnjkj8", 9201, "http")
+                            new HttpHost("jd", 9201, "http")
                     );
 
                     builder.setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {

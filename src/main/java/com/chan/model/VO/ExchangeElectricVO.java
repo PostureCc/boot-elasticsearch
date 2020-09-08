@@ -18,7 +18,7 @@ public class ExchangeElectricVO implements Serializable {
      */
     public static final String EXCHANGE_ELECTRIC = "bcadmin_exchange_electric";
 
-    private String id;
+    private Long id;
 
     private String uid;
 
@@ -33,9 +33,6 @@ public class ExchangeElectricVO implements Serializable {
     private String newBat;
 
     private Long operatorId;
-
-    //待确认是否可以获取到 还有换电柜短ID也一样
-    private String operatorNo;
 
     private String operatorName;
 
