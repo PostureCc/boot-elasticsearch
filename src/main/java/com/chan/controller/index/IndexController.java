@@ -8,6 +8,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +18,8 @@ import java.io.IOException;
 @RestController
 public class IndexController {
 
+    @Autowired
+    private ElasticSearchConfig elasticSearchConfig;
 
     @GetMapping("/createIndex")
     public void createIndex(String indexName) throws IOException {
@@ -24,13 +27,14 @@ public class IndexController {
         //{"index":{"number_of_shards":3,"number_of_replicas":1}}
         String
                 settings = "{\"index\":{\"number_of_shards\":1,\"number_of_replicas\":0,\"max_result_window\":500000}}",
-                mapping = "{\"properties\":{\"cabinetId\":{\"type\":\"keyword\"},\"cabinetName\":{\"type\":\"keyword\"},\"clientId\":{\"type\":\"keyword\"},\"createTime\":{\"type\":\"date\",\"format\":\"yyyy-MM-dd HH:mm:ss\"},\"id\":{\"type\":\"long\"},\"mobile\":{\"type\":\"keyword\"},\"newBat\":{\"type\":\"keyword\"},\"oldBat\":{\"type\":\"keyword\"},\"operatorId\":{\"type\":\"long\"},\"operatorName\":{\"type\":\"keyword\"},\"realName\":{\"type\":\"keyword\"},\"uid\":{\"type\":\"keyword\"}}}";
+                //mapping = "{\"properties\":{\"id\":{\"type\":\"long\"},\"uid\":{\"type\":\"keyword\"},\"userId\":{\"type\":\"long\"},\"orderNo\":{\"type\":\"keyword\"},\"mobile\":{\"type\":\"keyword\"},\"realName\":{\"type\":\"keyword\"},\"oldBat\":{\"type\":\"keyword\"},\"newBat\":{\"type\":\"keyword\"},\"siteId\":{\"type\":\"long\"},\"siteName\":{\"type\":\"keyword\"},\"operatorId\":{\"type\":\"long\"},\"operatorName\":{\"type\":\"keyword\"},\"cabinetNo\":{\"type\":\"keyword\"},\"cabinetName\":{\"type\":\"keyword\"},\"createTime\":{\"type\":\"date\",\"format\":\"yyyy-MM-dd HH:mm:ss\"}}}";
+                mapping = "{\"properties\":{\"id\":{\"type\":\"long\"},\"uid\":{\"type\":\"keyword\"},\"userId\":{\"type\":\"long\"},\"orderNo\":{\"type\":\"keyword\"},\"mobile\":{\"type\":\"keyword\"},\"realName\":{\"type\":\"keyword\"},\"oldBat\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\",\"ignore_above\":256}}},\"newBat\":{\"type\":\"keyword\"},\"siteId\":{\"type\":\"long\"},\"siteName\":{\"type\":\"keyword\"},\"operatorId\":{\"type\":\"long\"},\"operatorName\":{\"type\":\"keyword\"},\"cabinetNo\":{\"type\":\"keyword\"},\"cabinetName\":{\"type\":\"keyword\"},\"createTime\":{\"type\":\"date\",\"format\":\"yyyy-MM-dd HH:mm:ss\"}}}";
 
         CreateIndexRequest request = new CreateIndexRequest(indexName);
         request.settings(settings, XContentType.JSON);
         request.mapping(mapping, XContentType.JSON);
 
-        CreateIndexResponse response = ElasticSearchConfig.getRestHighLevelClient().indices().create(request, RequestOptions.DEFAULT);
+        CreateIndexResponse response = elasticSearchConfig.getRestHighLevelClient().indices().create(request, RequestOptions.DEFAULT);
 
         log.info("response {}", response);
     }
@@ -39,7 +43,7 @@ public class IndexController {
     public void deleteIndex(String indexName) {
         DeleteIndexRequest request = new DeleteIndexRequest(indexName);
         try {
-            AcknowledgedResponse response = ElasticSearchConfig.getRestHighLevelClient().indices().delete(request, RequestOptions.DEFAULT);
+            AcknowledgedResponse response = elasticSearchConfig.getRestHighLevelClient().indices().delete(request, RequestOptions.DEFAULT);
             log.info("response {}", response.isAcknowledged());
         } catch (IOException e) {
             e.printStackTrace();

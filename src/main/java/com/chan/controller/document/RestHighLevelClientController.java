@@ -3,6 +3,7 @@ package com.chan.controller.document;
 import com.chan.common.response.Message;
 import com.chan.common.response.ResultUtils;
 import com.chan.config.ElasticSearchConfig;
+import com.chan.config.ElasticSearchPoolUtil;
 import com.chan.mapper.DeviceChangeMapper;
 import com.chan.model.VO.ExchangeElectricVO;
 import com.chan.utils.GsonUtils;
@@ -18,6 +19,7 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.rest.RestStatus;
@@ -51,6 +53,9 @@ public class RestHighLevelClientController {
 
     @Autowired
     private DeviceChangeMapper deviceChangeMapper;
+
+    @Autowired
+    private ElasticSearchConfig elasticSearchConfig;
 
     @GetMapping("/add")
     public void add() {
@@ -96,7 +101,7 @@ public class RestHighLevelClientController {
 
         log.info("builder: {}", builder);
         try {
-            SearchResponse response = ElasticSearchConfig.getRestHighLevelClient().search(request, RequestOptions.DEFAULT);
+            SearchResponse response = elasticSearchConfig.getRestHighLevelClient().search(request, RequestOptions.DEFAULT);
             SearchHit[] hits = response.getHits().getHits();
 
             //Arrays.stream(hits).forEach(item -> log.info(item.getId()));
@@ -111,7 +116,7 @@ public class RestHighLevelClientController {
                                 )
                 );
             });
-            BulkResponse bulkResponse = ElasticSearchConfig.getRestHighLevelClient().bulk(bulkRequest, RequestOptions.DEFAULT);
+            BulkResponse bulkResponse = elasticSearchConfig.getRestHighLevelClient().bulk(bulkRequest, RequestOptions.DEFAULT);
             log.info("hasFailures: {}", bulkResponse.hasFailures());
 
         } catch (IOException e) {
@@ -120,34 +125,61 @@ public class RestHighLevelClientController {
 
     }
 
+    /**
+     * 新增换电记录
+     */
+    public void insertExchangeElectric(ExchangeElectricVO exchangeElectricVO) {
+        IndexRequest request = new IndexRequest(ExchangeElectricVO.EXCHANGE_ELECTRIC, ElasticSearchConfig._DCO)
+                .source(GsonUtils.GsonString(exchangeElectricVO), XContentType.JSON);
+
+        try {
+            RestHighLevelClient restHighLevelClient = null;
+            try {
+                restHighLevelClient = ElasticSearchPoolUtil.getClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("restHighLevelClient " + restHighLevelClient);
+            IndexResponse response = restHighLevelClient.index(request, RequestOptions.DEFAULT);
+            log.info("response {}", response);
+            ElasticSearchPoolUtil.returnClient(restHighLevelClient);
+        } catch (IOException e) {
+            log.error(e);
+        }
+
+    }
+
     @GetMapping("/bulkAdd")
-    public void bulkAdd(int page, int size) throws IOException {
+    public void bulkAdd(int page, int size) {
         List<ExchangeElectricVO> list = deviceChangeMapper.list(page, size);
 
         //创建批量请求对象
-        BulkRequest request = new BulkRequest();
+//        BulkRequest request = new BulkRequest();
 
         //无事务操作 例如新增100条数据 在新增到第99条数据时失败 不会回退
         //如果100条数据里 有20条数据的ID相同 会新增80条件数据 再根据ID修改20条数据
         long time1 = System.currentTimeMillis();
         list.stream().forEach(item -> {
-            request.add(
-                    new IndexRequest("bcadmin_exchange_electric2", ElasticSearchConfig._DCO)
-                            //.id(item.getId())
-                            .source(GsonUtils.GsonString(item), XContentType.JSON)
-            );
+//            request.add(
+//                    new IndexRequest("bcadmin_exchange_electric1", ElasticSearchConfig._DCO)
+//                            //.id(item.getId())
+//                            .source(GsonUtils.GsonString(item), XContentType.JSON)
+//            );
+
+            insertExchangeElectric(item);
+
         });
 
         log.info("循环耗时 {}", System.currentTimeMillis() - time1);
 
-        long time2 = System.currentTimeMillis();
-        BulkResponse responses = ElasticSearchConfig.getRestHighLevelClient().bulk(request, RequestOptions.DEFAULT);
+//        long time2 = System.currentTimeMillis();
+//        BulkResponse responses = elasticSearchConfig.getRestHighLevelClient().bulk(request, RequestOptions.DEFAULT);
         //测试服务器 3w数据 40s左右 十万数据会打挂
-        log.info("执行耗时 {}", System.currentTimeMillis() - time2);
-        log.info("responses {}", responses);
+//        log.info("执行耗时 {}", System.currentTimeMillis() - time2);
+//        log.info("responses {}", responses);
 
         //批量操作是否失败
-        log.info("hasFailures {}", responses.hasFailures());
+//        log.info("hasFailures {}", responses.hasFailures());
 
     }
 
@@ -169,7 +201,10 @@ public class RestHighLevelClientController {
         if (1 >= pageNum) {
             searchSourceBuilder.size(pageSize);
         } else {
-            searchSourceBuilder.size(pageSize).searchAfter(new Object[]{id});
+            PageNumAndSize page = PageNumAndSize.checkPage0(pageNum, pageSize);
+            searchSourceBuilder.from(page.getPageNum()).size(pageSize)
+            //        .searchAfter(new Object[]{id})
+            ;
         }
 
 
@@ -198,7 +233,7 @@ public class RestHighLevelClientController {
 
         try {
             //获取查询条件的返回值
-            SearchResponse searchResponse = ElasticSearchConfig.getRestHighLevelClient().search(searchRequest, RequestOptions.DEFAULT);
+            SearchResponse searchResponse = elasticSearchConfig.getRestHighLevelClient().search(searchRequest, RequestOptions.DEFAULT);
             //searchResponse.getScrollId();
 
             //获取结果集
@@ -246,8 +281,8 @@ public class RestHighLevelClientController {
 
         try {
             //获取查询条件的返回值
-            SearchResponse searchResponse = ElasticSearchConfig.getRestHighLevelClient().search(searchRequest, RequestOptions.DEFAULT);
-            ElasticSearchConfig.getRestHighLevelClient().close();
+            SearchResponse searchResponse = elasticSearchConfig.getRestHighLevelClient().search(searchRequest, RequestOptions.DEFAULT);
+            //ElasticSearchConfig.getRestHighLevelClient().close();
 
             //获取结果集
             SearchHits responseHits = searchResponse.getHits();
@@ -290,7 +325,7 @@ public class RestHighLevelClientController {
         request.source(sourceBuilder);
 
         try {
-            SearchResponse response = ElasticSearchConfig.getRestHighLevelClient().search(request, RequestOptions.DEFAULT);
+            SearchResponse response = elasticSearchConfig.getRestHighLevelClient().search(request, RequestOptions.DEFAULT);
 
             if (RestStatus.OK.equals(response.status())) {
                 Aggregations aggregations = response.getAggregations();

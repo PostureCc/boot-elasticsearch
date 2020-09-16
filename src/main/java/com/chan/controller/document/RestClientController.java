@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +20,9 @@ import java.util.Map;
 @Log4j2
 @RestController
 public class RestClientController {
+
+    @Autowired
+    private ElasticSearchConfig elasticSearchConfig;
 
     @GetMapping("/save")
     public void save() throws IOException {/*
@@ -59,7 +63,7 @@ public class RestClientController {
         Request request = new Request("POST", index);
         request.setJsonEntity("{\"doc\":{\"realName\":\"李健2\"}}");
 
-        Response response = ElasticSearchConfig.getRestClient().performRequest(request);
+        Response response = elasticSearchConfig.getRestClient().performRequest(request);
 
         System.out.println(EntityUtils.toString(response.getEntity()));
     }
@@ -72,7 +76,7 @@ public class RestClientController {
         Request request = new Request("POST", index);
         request.setJsonEntity("{\"query\":{\"term\":{\"id\":\"218118\"}},\"script\":{\"inline\":\"ctx._source.realName='李健';ctx._source.createTime='2020-08-06 16:29:50'\",\"lang\":\"painless\"}}");
 
-        Response response = ElasticSearchConfig.getRestClient().performRequest(request);
+        Response response = elasticSearchConfig.getRestClient().performRequest(request);
         System.out.println(EntityUtils.toString(response.getEntity()));
     }
 
@@ -83,7 +87,7 @@ public class RestClientController {
         String queryString = "{\"query\":{\"match_all\":{}}}";
         request.setJsonEntity(queryString);
 
-        Response response = ElasticSearchConfig.getRestClient().performRequest(request);
+        Response response = elasticSearchConfig.getRestClient().performRequest(request);
         String string = EntityUtils.toString(response.getEntity());
         System.out.println("string " + string);
     }
@@ -95,7 +99,7 @@ public class RestClientController {
         String queryString = String.format("{\"query\":{\"match\":{\"cabinetName\":\"%s\"}},\"highlight\":{\"fields\":{\"cabinetName\":{}}}}", cabinetName);
         request.setJsonEntity(queryString);
 
-        Response response = ElasticSearchConfig.getRestClient().performRequest(request);
+        Response response = elasticSearchConfig.getRestClient().performRequest(request);
 
         System.out.println("RequestLine " + response.getRequestLine());
 
@@ -108,12 +112,12 @@ public class RestClientController {
         Request request = new Request("POST", "/bcadmin_exchange_electric/_count");
 
         try {
-            Response response = ElasticSearchConfig.getRestClient().performRequest(request);
+            Response response = elasticSearchConfig.getRestClient().performRequest(request);
 
             HashMap<String, Object> hashMap = GsonUtils.GsonToBean(EntityUtils.toString(response.getEntity()), HashMap.class);
             System.out.println(hashMap.get("count"));
 
-            ElasticSearchConfig.getRestClient().close();
+            elasticSearchConfig.getRestClient().close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -130,7 +134,7 @@ public class RestClientController {
 
         Response response = null;
         try {
-            response = ElasticSearchConfig.getRestClient().performRequest(request);
+            response = elasticSearchConfig.getRestClient().performRequest(request);
 
             String totalData = EntityUtils.toString(response.getEntity());
             System.out.println(totalData);
@@ -161,7 +165,7 @@ public class RestClientController {
 //        controller.count();
 
         RestHighLevelClientController restHighLevelClientController = new RestHighLevelClientController();
-        restHighLevelClientController.search2(1,20);
+        restHighLevelClientController.search2(1, 20);
 
     }
 

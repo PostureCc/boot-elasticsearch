@@ -16,28 +16,27 @@ public class ExchangeElectricVO implements Serializable {
     /**
      * 索引名称只能小写!
      */
-    public static final String EXCHANGE_ELECTRIC = "bcadmin_exchange_electric";
+    public static final String EXCHANGE_ELECTRIC = "bcadmin_exchange_electric1";
 
     private Long id;
 
     private String uid;
-
-    private String clientId;
+    private Long userId;
+    private String orderNo;
 
     private String mobile;
-
     private String realName;
 
     private String oldBat;
-
     private String newBat;
 
-    private Long operatorId;
+    private Long siteId;
+    private String siteName;
 
+    private Long operatorId;
     private String operatorName;
 
-    private String cabinetId;
-
+    private String cabinetNo;
     private String cabinetName;
 
     private String createTime;
